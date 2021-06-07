@@ -4,8 +4,8 @@
 --   TOAD Version       : 9.0.1.8 
 --   DB Connect String  : TESTE 
 --   Schema             : ARTBOX 
---   Script Created by  : PORTAL 
---   Script Created at  : 19/05/2021 14:14:56 
+--   Script Created by  : ARTBOX 
+--   Script Created at  : 07/06/2021 13:53:56 
 --   Physical Location  :  
 --   Notes              :  
 --
@@ -16,13 +16,13 @@
 --   Package Bodies: 4  Lines of Code: 880 
 --   Procedures: 1      Lines of Code: 14 
 --   Sequences: 12 
---   Tables: 21         Columns: 123        Constraints: 48     
---   Triggers: 11 
+--   Tables: 25         Columns: 142        Constraints: 48     
+--   Triggers: 12 
 --   Views: 2           
 
 
-CREATE SEQUENCE SQ_ATB_CLIENTE
-  START WITH 0
+CREATE SEQUENCE SQ_ATB_CLIENTES
+  START WITH 8
   MAXVALUE 9999999999999999999999999999
   MINVALUE 0
   NOCYCLE
@@ -31,7 +31,7 @@ CREATE SEQUENCE SQ_ATB_CLIENTE
 
 
 CREATE SEQUENCE SQ_ATB_FORNECEDOR
-  START WITH 116
+  START WITH 531
   MAXVALUE 9999999999999999999999999999
   MINVALUE 0
   NOCYCLE
@@ -58,7 +58,7 @@ CREATE SEQUENCE SQ_ATB_JOB
 
 
 CREATE SEQUENCE SQ_ATB_JOB_DET
-  START WITH 42
+  START WITH 49
   MAXVALUE 9999999999999999999999999999
   MINVALUE 0
   NOCYCLE
@@ -76,16 +76,16 @@ CREATE SEQUENCE SQ_ATB_LANCAMENTOS
 
 
 CREATE SEQUENCE SQ_ATB_MATERIAL
-  START WITH 8
+  START WITH 68
   MAXVALUE 9999999999999999999999999999
-  MINVALUE 0
+  MINVALUE 1
   NOCYCLE
   NOCACHE
   NOORDER;
 
 
 CREATE SEQUENCE SQ_ATB_MATERIAL_SLA_DET
-  START WITH 343
+  START WITH 392
   MAXVALUE 9999999999999999999999999999
   MINVALUE 0
   NOCYCLE
@@ -94,7 +94,7 @@ CREATE SEQUENCE SQ_ATB_MATERIAL_SLA_DET
 
 
 CREATE SEQUENCE SQ_ATB_MATERIAL_SLA_EMAIL
-  START WITH 48
+  START WITH 55
   MAXVALUE 9999999999999999999999999999
   MINVALUE 0
   NOCYCLE
@@ -129,41 +129,7 @@ CREATE SEQUENCE SQ_ATB_SERVICOS
   NOORDER;
 
 
-CREATE TABLE ATB_CLIENTES
-(
-  SEQ_CLIENTE     NUMBER(8)                     NOT NULL,
-  DM_TPO_PESSOA   VARCHAR2(1 BYTE)              NOT NULL,
-  NUM_CPF         VARCHAR2(11 BYTE),
-  NUM_CNPJ        VARCHAR2(14 BYTE),
-  NOM_CLIENTE     VARCHAR2(40 BYTE)             NOT NULL,
-  NOM_FANTASIA    VARCHAR2(25 BYTE),
-  DM_TPO_CLIENTE  NUMBER(1),
-  DM_FL_BLOQ      VARCHAR2(1 BYTE)              DEFAULT 'N'                   NOT NULL
-)
-LOGGING 
-NOCOMPRESS 
-NOCACHE
-NOPARALLEL
-MONITORING;
-
-
-CREATE TABLE ATB_CLIENTES_ENDERECOS
-(
-  SEQ_CLIENTE      NUMBER                       NOT NULL,
-  CG_TPO_ENDERECO  NUMBER(1)                    NOT NULL,
-  SEQ_LOGRADOURO   NUMBER                       NOT NULL,
-  NUM_ENDERECO     NUMBER                       NOT NULL,
-  NOM_COMPLEMENTO  VARCHAR2(25 BYTE),
-  ACE_SEQ_CLIENTE  NUMBER(8)                    NOT NULL
-)
-LOGGING 
-NOCOMPRESS 
-NOCACHE
-NOPARALLEL
-MONITORING;
-
-
-CREATE TABLE ATB_NOTA_ENTRADA
+CREATE TABLE ATB_NOTAS_ENT
 (
   SEQ_FORNECEDOR  NUMBER(9)                     NOT NULL,
   NUM_NOTA        NUMBER(7)                     NOT NULL,
@@ -179,25 +145,13 @@ NOPARALLEL
 MONITORING;
 
 
-CREATE TABLE ATB_PRODUTOS_SERVICOS
-(
-  SEQ_PRODUTO  NUMBER(10)                       NOT NULL,
-  SEQ_SERVICO  NUMBER(10)                       NOT NULL
-)
-LOGGING 
-NOCOMPRESS 
-NOCACHE
-NOPARALLEL
-MONITORING;
-
-
-CREATE TABLE ATB_REQUISICAO_ITEM
+CREATE TABLE ATB_REQUISICOES_ITENS
 (
   NUM_REQUISICAO  NUMBER(7)                     NOT NULL,
   NUM_ITEM        NUMBER(5)                     NOT NULL,
   SEQ_MATERIAL    NUMBER(10)                    NOT NULL,
   QTD_MATERIAL    NUMBER(7,2)                   NOT NULL,
-  VAL_MATERIAL    NUMBER(7,2)                   NOT NULL
+  VAL_MATERIAL    NUMBER(7,2)
 )
 LOGGING 
 NOCOMPRESS 
@@ -206,7 +160,7 @@ NOPARALLEL
 MONITORING;
 
 
-CREATE TABLE ATB_MATERIAL_SLA
+CREATE TABLE ATB_MATERIAIS_SLA
 (
   SEQ_MATERIAL    NUMBER(10)                    NOT NULL,
   VAL_NIVEL       NUMBER(1)                     NOT NULL,
@@ -221,7 +175,7 @@ NOPARALLEL
 MONITORING;
 
 
-CREATE TABLE ATB_MATERIAL_SLA_DET
+CREATE TABLE ATB_MATERIAIS_SLA_DET
 (
   SEQ_SLA_DET     NUMBER(10)                    NOT NULL,
   SEQ_MATERIAL    NUMBER(10)                    NOT NULL,
@@ -237,7 +191,7 @@ NOCACHE
 NOPARALLEL
 MONITORING;
 
-COMMENT ON COLUMN ATB_MATERIAL_SLA_DET.STA_SLA IS 'P-Pendente, E-Enviado, C-Cancelado';
+COMMENT ON COLUMN ATB_MATERIAIS_SLA_DET.STA_SLA IS 'P-Pendente, E-Enviado, C-Cancelado';
 
 
 CREATE TABLE ATB_SERVICOS_TARIFAS
@@ -245,6 +199,123 @@ CREATE TABLE ATB_SERVICOS_TARIFAS
   SEQ_SERVICO   NUMBER(10)                      NOT NULL,
   DAT_VIGENCIA  DATE                            NOT NULL,
   VAL_SERVICO   NUMBER(10,2)                    NOT NULL
+)
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE ATB_REQUISICOES
+(
+  NUM_REQUISICAO  NUMBER(7)                     NOT NULL,
+  DSC_REQUISICAO  VARCHAR2(60 BYTE)             NOT NULL,
+  DAT_REQUISICAO  DATE                          NOT NULL,
+  NOM_USUARIO     VARCHAR2(30 BYTE),
+  STA_REQUISICAO  VARCHAR2(1 BYTE)              NOT NULL
+)
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE ATB_PRODUTOS_MAT
+(
+  SEQ_PRODUTO   NUMBER(10)                      NOT NULL,
+  SEQ_MATERIAL  NUMBER(10)                      NOT NULL,
+  QTD_MATERIAL  NUMBER(7,2)
+)
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE LOGRADOURO
+(
+  ZONA_LIGACAO       NUMBER(3)                  NOT NULL,
+  COD_LOGR           NUMBER(7)                  NOT NULL,
+  NOM_LOGR           VARCHAR2(60 BYTE)          NOT NULL,
+  NOM_LOGR_FANTASIA  VARCHAR2(80 BYTE),
+  NOM_LOGR_ANT       VARCHAR2(60 BYTE),
+  REF_GUIA           VARCHAR2(10 BYTE),
+  TPO_LOGR           VARCHAR2(5 BYTE),
+  TIT_LOGR           VARCHAR2(7 BYTE),
+  COD_RESERVATORIO   NUMBER(3)
+)
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE ATB_MATERIAIS_SALDOS
+(
+  SEQ_MATERIAL    NUMBER(10)                    NOT NULL,
+  DAT_REFERENCIA  DATE                          NOT NULL,
+  QTD_SALDO       NUMBER(10,2)                  NOT NULL,
+  VAL_SALDO       NUMBER(10,2)                  NOT NULL
+)
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE ATB_FORNECEDORES_ENDERECO
+(
+  SEQ_FORNECEDOR   NUMBER(9)                    NOT NULL,
+  DM_TPO_ENDERECO  NUMBER(1)                    NOT NULL,
+  SEQ_LOGRADOURO   NUMBER                       NOT NULL,
+  NUM_ENDERECO     NUMBER(12)                   NOT NULL,
+  NOM_COMPLEMENTO  VARCHAR2(20 BYTE)
+)
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE ATB_PRODUTOS_SERV
+(
+  SEQ_PRODUTO  NUMBER(10)                       NOT NULL,
+  SEQ_SERVICO  NUMBER(10)                       NOT NULL
+)
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE LOGRADOURO1
+(
+  NOM_BAIRRO  VARCHAR2(100 BYTE),
+  COD_LOGR    VARCHAR2(100 BYTE),
+  TIT_LOGR    VARCHAR2(100 BYTE),
+  NOM_LOGR    VARCHAR2(100 BYTE),
+  TPO_LOGR    VARCHAR2(100 BYTE)
+)
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE BAIRRO
+(
+  ZONA_LIGACAO  NUMBER(3)                       NOT NULL,
+  COD_BAIRRO    NUMBER(6)                       NOT NULL,
+  NOM_BAIRRO    VARCHAR2(30 BYTE)               NOT NULL,
+  COD_LOJA      VARCHAR2(6 BYTE)                NOT NULL
 )
 LOGGING 
 NOCOMPRESS 
@@ -265,7 +336,7 @@ NOPARALLEL
 MONITORING;
 
 
-CREATE TABLE ATB_MATERIAL
+CREATE TABLE ATB_MATERIAIS
 (
   SEQ_MATERIAL       NUMBER(10)                 NOT NULL,
   NOM_MATERIAL       VARCHAR2(40 BYTE)          NOT NULL,
@@ -288,22 +359,7 @@ NOPARALLEL
 MONITORING;
 
 
-CREATE TABLE ATB_REQUISICAO
-(
-  NUM_REQUISICAO  NUMBER(7)                     NOT NULL,
-  DSC_REQUISICAO  VARCHAR2(60 BYTE)             NOT NULL,
-  DAT_REQUISICAO  DATE                          NOT NULL,
-  NOM_USUARIO     VARCHAR2(30 BYTE),
-  STA_REQUISICAO  VARCHAR2(1 BYTE)              NOT NULL
-)
-LOGGING 
-NOCOMPRESS 
-NOCACHE
-NOPARALLEL
-MONITORING;
-
-
-CREATE TABLE ATB_MATERIAL_SLA_EMAIL
+CREATE TABLE ATB_MATERIAIS_SLA_EMAIL
 (
   SEQ_EMAIL    NUMBER                           NOT NULL,
   DSC_ASSUNTO  VARCHAR2(120 BYTE)               NOT NULL,
@@ -316,7 +372,7 @@ NOCACHE
 NOPARALLEL
 MONITORING;
 
-COMMENT ON COLUMN ATB_MATERIAL_SLA_EMAIL.STA_EMAIL IS 'P-Pendente, E-Enviado,  C-Cancelado';
+COMMENT ON COLUMN ATB_MATERIAIS_SLA_EMAIL.STA_EMAIL IS 'P-Pendente, E-Enviado,  C-Cancelado';
 
 
 CREATE TABLE ATB_PRODUTOS
@@ -341,11 +397,16 @@ NOPARALLEL
 MONITORING;
 
 
-CREATE TABLE ATB_PRODUTOS_MATERIAIS
+CREATE TABLE ATB_CLIENTES
 (
-  SEQ_PRODUTO   NUMBER(10)                      NOT NULL,
-  SEQ_MATERIAL  NUMBER(10)                      NOT NULL,
-  QTD_MATERIAL  NUMBER(7,2)
+  SEQ_CLIENTE     NUMBER(8)                     NOT NULL,
+  DM_TPO_PESSOA   VARCHAR2(1 BYTE)              NOT NULL,
+  NUM_CPF         VARCHAR2(11 BYTE),
+  NUM_CNPJ        VARCHAR2(14 BYTE),
+  NOM_CLIENTE     VARCHAR2(40 BYTE)             NOT NULL,
+  NOM_FANTASIA    VARCHAR2(25 BYTE),
+  DM_TPO_CLIENTE  VARCHAR2(1 BYTE),
+  DM_FL_BLOQ      VARCHAR2(1 BYTE)              DEFAULT 'N'                   NOT NULL
 )
 LOGGING 
 NOCOMPRESS 
@@ -354,7 +415,7 @@ NOPARALLEL
 MONITORING;
 
 
-CREATE TABLE ATB_FORNECEDOR
+CREATE TABLE ATB_FORNECEDORES
 (
   SEQ_FORNECEDOR    NUMBER(9)                   NOT NULL,
   NUM_CNPJ          NUMBER(14)                  NOT NULL,
@@ -365,6 +426,18 @@ CREATE TABLE ATB_FORNECEDOR
   NOM_USUARIO       VARCHAR2(20 BYTE)           NOT NULL,
   DAT_CADASTRO      DATE                        NOT NULL,
   DMN_FL_BLOQ       VARCHAR2(1 BYTE)            DEFAULT 'N'                   NOT NULL
+)
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE CARLOS
+(
+  NUM_DOC_1    VARCHAR2(25 BYTE),
+  NOM_CLIENTE  VARCHAR2(50 BYTE)                NOT NULL
 )
 LOGGING 
 NOCOMPRESS 
@@ -394,27 +467,13 @@ MONITORING;
 COMMENT ON COLUMN ATB_JOB_DET.STA_JOB IS 'P-Programado, E-Executando, C-Cancelado, F-Feito';
 
 
-CREATE TABLE ATB_MATERIAL_SALDOS
+CREATE TABLE ATB_CLIENTES_ENDERECOS
 (
-  SEQ_MATERIAL    NUMBER(10)                    NOT NULL,
-  DAT_REFERENCIA  DATE                          NOT NULL,
-  QTD_SALDO       NUMBER(10,2)                  NOT NULL,
-  VAL_SALDO       NUMBER(10,2)                  NOT NULL
-)
-LOGGING 
-NOCOMPRESS 
-NOCACHE
-NOPARALLEL
-MONITORING;
-
-
-CREATE TABLE ATB_FORNECEDOR_ENDERECO
-(
-  SEQ_FORNECEDOR   NUMBER(9)                    NOT NULL,
+  SEQ_CLIENTE      NUMBER(8)                    NOT NULL,
   DM_TPO_ENDERECO  NUMBER(1)                    NOT NULL,
   SEQ_LOGRADOURO   NUMBER                       NOT NULL,
-  NUM_ENDERECO     NUMBER(12)                   NOT NULL,
-  NOM_COMPLEMENTO  VARCHAR2(20 BYTE)
+  NUM_ENDERECO     NUMBER                       NOT NULL,
+  NOM_COMPLEMENTO  VARCHAR2(25 BYTE)
 )
 LOGGING 
 NOCOMPRESS 
@@ -423,7 +482,7 @@ NOPARALLEL
 MONITORING;
 
 
-CREATE TABLE ATB_NOTA_ENTRADA_ITEM
+CREATE TABLE ATB_NOTAS_ENT_ITENS
 (
   SEQ_FORNECEDOR  NUMBER(9)                     NOT NULL,
   NUM_NOTA        NUMBER(7)                     NOT NULL,
@@ -439,7 +498,7 @@ NOPARALLEL
 MONITORING;
 
 
-CREATE TABLE ATB_FORNECEDOR_MATERIAL
+CREATE TABLE ATB_FORNECEDORES_MAT
 (
   SEQ_FORNECEDOR     NUMBER(9)                  NOT NULL,
   SEQ_MATERIAL       NUMBER(10)                 NOT NULL,
@@ -468,13 +527,13 @@ NOPARALLEL
 MONITORING;
 
 
-CREATE UNIQUE INDEX ATB_MATERIAL_SLA_EMAIL_PK ON ATB_MATERIAL_SLA_EMAIL
+CREATE UNIQUE INDEX ATB_MATERIAL_SLA_EMAIL_PK ON ATB_MATERIAIS_SLA_EMAIL
 (SEQ_EMAIL)
 LOGGING
 NOPARALLEL;
 
 
-CREATE UNIQUE INDEX ATB_MATERIAL_SLA_PK ON ATB_MATERIAL_SLA
+CREATE UNIQUE INDEX ATB_MATERIAL_SLA_PK ON ATB_MATERIAIS_SLA
 (SEQ_MATERIAL, VAL_NIVEL)
 LOGGING
 NOPARALLEL;
@@ -492,14 +551,14 @@ LOGGING
 NOPARALLEL;
 
 
-CREATE UNIQUE INDEX ATB_MATERIAL_SLA_DET_PK ON ATB_MATERIAL_SLA_DET
+CREATE UNIQUE INDEX ATB_MATERIAL_SLA_DET_PK ON ATB_MATERIAIS_SLA_DET
 (SEQ_SLA_DET)
 LOGGING
 NOPARALLEL;
 
 
 CREATE UNIQUE INDEX ATB_CLIENTES_END_PK ON ATB_CLIENTES_ENDERECOS
-(SEQ_CLIENTE, CG_TPO_ENDERECO)
+(SEQ_CLIENTE, DM_TPO_ENDERECO)
 LOGGING
 NOPARALLEL;
 
@@ -516,7 +575,7 @@ LOGGING
 NOPARALLEL;
 
 
-CREATE UNIQUE INDEX ATB_MATERIAL_SALDOS_PK ON ATB_MATERIAL_SALDOS
+CREATE UNIQUE INDEX ATB_MATERIAL_SALDOS_PK ON ATB_MATERIAIS_SALDOS
 (SEQ_MATERIAL, DAT_REFERENCIA)
 LOGGING
 NOPARALLEL;
@@ -528,13 +587,13 @@ LOGGING
 NOPARALLEL;
 
 
-CREATE UNIQUE INDEX ATB_PRODUTOS_SERV_PK ON ATB_PRODUTOS_SERVICOS
+CREATE UNIQUE INDEX ATB_PRODUTOS_SERV_PK ON ATB_PRODUTOS_SERV
 (SEQ_PRODUTO, SEQ_SERVICO)
 LOGGING
 NOPARALLEL;
 
 
-CREATE UNIQUE INDEX ATB_PRODUTOS_MAT_PK ON ATB_PRODUTOS_MATERIAIS
+CREATE UNIQUE INDEX ATB_PRODUTOS_MAT_PK ON ATB_PRODUTOS_MAT
 (SEQ_PRODUTO, SEQ_MATERIAL)
 LOGGING
 NOPARALLEL;
@@ -546,49 +605,49 @@ LOGGING
 NOPARALLEL;
 
 
-CREATE UNIQUE INDEX FORNECEDOR_MAT_PK ON ATB_FORNECEDOR_MATERIAL
+CREATE UNIQUE INDEX FORNECEDOR_MAT_PK ON ATB_FORNECEDORES_MAT
 (SEQ_FORNECEDOR, SEQ_MATERIAL)
 LOGGING
 NOPARALLEL;
 
 
-CREATE UNIQUE INDEX FORNECEDOR_PK ON ATB_FORNECEDOR
+CREATE UNIQUE INDEX FORNECEDOR_PK ON ATB_FORNECEDORES
 (SEQ_FORNECEDOR)
 LOGGING
 NOPARALLEL;
 
 
-CREATE UNIQUE INDEX MATERIAL_PK ON ATB_MATERIAL
+CREATE UNIQUE INDEX MATERIAL_PK ON ATB_MATERIAIS
 (SEQ_MATERIAL)
 LOGGING
 NOPARALLEL;
 
 
-CREATE UNIQUE INDEX ATB_REQUISICAO_PK ON ATB_REQUISICAO
+CREATE UNIQUE INDEX ATB_REQUISICAO_PK ON ATB_REQUISICOES
 (NUM_REQUISICAO)
 LOGGING
 NOPARALLEL;
 
 
-CREATE UNIQUE INDEX ATB_NFE_ITEM_PK ON ATB_NOTA_ENTRADA_ITEM
+CREATE UNIQUE INDEX ATB_NFE_ITEM_PK ON ATB_NOTAS_ENT_ITENS
 (SEQ_FORNECEDOR, NUM_NOTA, SEQ_ITEM)
 LOGGING
 NOPARALLEL;
 
 
-CREATE UNIQUE INDEX ATB_NOTA_ENTRADA_PK ON ATB_NOTA_ENTRADA
+CREATE UNIQUE INDEX ATB_NOTA_ENTRADA_PK ON ATB_NOTAS_ENT
 (SEQ_FORNECEDOR, NUM_NOTA)
 LOGGING
 NOPARALLEL;
 
 
-CREATE UNIQUE INDEX ATB_REQUISICAO_ITEM_PK ON ATB_REQUISICAO_ITEM
+CREATE UNIQUE INDEX ATB_REQUISICAO_ITEM_PK ON ATB_REQUISICOES_ITENS
 (NUM_REQUISICAO, NUM_ITEM)
 LOGGING
 NOPARALLEL;
 
 
-CREATE UNIQUE INDEX FORNECEDOR_ENDERECO_PK ON ATB_FORNECEDOR_ENDERECO
+CREATE UNIQUE INDEX FORNECEDOR_ENDERECO_PK ON ATB_FORNECEDORES_ENDERECO
 (SEQ_FORNECEDOR, DM_TPO_ENDERECO)
 LOGGING
 NOPARALLEL;
@@ -602,14 +661,14 @@ CREATE OR REPLACE Package pkg_nota_entrada Is
 
    Procedure prc_acerta_item
    (
-	  p_seq_fornecedor In atb_nota_entrada.seq_fornecedor%Type,
-	  p_num_nota       In atb_nota_entrada.num_nota%Type
+	  p_seq_fornecedor In atb_notas_ent.seq_fornecedor%Type,
+	  p_num_nota       In atb_notas_ent.num_nota%Type
    );
 
    Procedure prc_fecha_nota
    (
-	  p_seq_fornecedor In atb_nota_entrada.seq_fornecedor%Type,
-	  p_num_nota       In atb_nota_entrada.num_nota%Type
+	  p_seq_fornecedor In atb_notas_ent.seq_fornecedor%Type,
+	  p_num_nota       In atb_notas_ent.num_nota%Type
    );
 
 End pkg_nota_entrada;
@@ -618,7 +677,7 @@ End pkg_nota_entrada;
 SHOW ERRORS;
 
 
-CREATE OR REPLACE Package pkg_material Is
+CREATE OR REPLACE Package pkg_materiais Is
 
    -- Author  : CARLOS
    -- Created : 04/02/2021 16:21:11
@@ -626,38 +685,38 @@ CREATE OR REPLACE Package pkg_material Is
 
    Procedure prc_associar_material
    (
-	  p_seq_fornecedor    In atb_fornecedor.seq_fornecedor%Type,
-	  p_seq_material      In atb_material.seq_material%Type,
-	  p_qtd_maxima_compra In atb_fornecedor_material.qtd_maxima_compra%Type,
-	  p_val_preco_maximo  In atb_fornecedor_material.val_preco_maximo%Type
+	  p_seq_fornecedor    In atb_fornecedores.seq_fornecedor%Type,
+	  p_seq_material      In atb_materiais.seq_material%Type,
+	  p_qtd_maxima_compra In atb_fornecedores_mat.qtd_maxima_compra%Type,
+	  p_val_preco_maximo  In atb_fornecedores_mat.val_preco_maximo%Type
    );
 
    Procedure prc_calc_estoque
    (
-	  p_seq_material   In atb_material.seq_material%Type,
-	  p_dat_lancamento In atb_nota_entrada.dat_compra%Type
+	  p_seq_material   In atb_materiais.seq_material%Type,
+	  p_dat_lancamento In atb_notas_ent.dat_compra%Type
    );
 
    Function fnc_rec_valores
    (
-	  p_seq_material   In atb_material.seq_material%Type,
-	  p_dat_lancamento In atb_nota_entrada.dat_compra%Type,
+	  p_seq_material   In atb_materiais.seq_material%Type,
+	  p_dat_lancamento In atb_notas_ent.dat_compra%Type,
 	  p_tpo_valor      In Number
    ) Return Number;
 
    Procedure prc_fecha_nota
    (
-	  p_seq_fornecedor In atb_nota_entrada.seq_fornecedor%Type,
-	  p_num_nota       In atb_nota_entrada.num_nota%Type
+	  p_seq_fornecedor In atb_notas_ent.seq_fornecedor%Type,
+	  p_num_nota       In atb_notas_ent.num_nota%Type
    );
 
-   Procedure prc_fecha_requisicao(p_num_requisicao In atb_requisicao.num_requisicao%Type);
+   Procedure prc_fecha_requisicao(p_num_requisicao In atb_requisicoes.num_requisicao%Type);
 
-   Procedure prc_fechamento_estoque(p_dat_lancamento In atb_nota_entrada.dat_compra%Type);
+   Procedure prc_fechamento_estoque(p_dat_lancamento In atb_notas_ent.dat_compra%Type);
 
    Procedure prc_materiais_sla(p_dt_exec In Date);
 
-End pkg_material;
+End pkg_materiais;
 /
 
 SHOW ERRORS;
@@ -712,11 +771,11 @@ CREATE OR REPLACE Package Body pkg_nota_entrada Is
 
    Procedure prc_acerta_item
    (
-	  p_seq_fornecedor In atb_nota_entrada.seq_fornecedor%Type,
-	  p_num_nota       In atb_nota_entrada.num_nota%Type
+	  p_seq_fornecedor In atb_notas_ent.seq_fornecedor%Type,
+	  p_num_nota       In atb_notas_ent.num_nota%Type
    ) Is
    
-	  v_seq_item atb_nota_entrada_item.seq_item%Type;
+	  v_seq_item atb_notas_ent_itens.seq_item%Type;
    
 	  Type rg_item Is Record(
 		 seq_item     Number(3),
@@ -728,7 +787,7 @@ CREATE OR REPLACE Package Body pkg_nota_entrada Is
    
 	  Cursor c_item Is
 		 Select seq_item, seq_material, qtd_item, val_item
-		 From   atb_nota_entrada_item
+		 From   atb_notas_ent_itens
 		 Where  seq_fornecedor = p_seq_fornecedor And
 				num_nota = p_num_nota;
    
@@ -744,12 +803,12 @@ CREATE OR REPLACE Package Body pkg_nota_entrada Is
 	  
 	  End Loop;
    
-	  Delete atb_nota_entrada_item
+	  Delete atb_notas_ent_itens
 	  Where  seq_fornecedor = p_seq_fornecedor And
 			 num_nota = p_num_nota;
    
 	  For vetor In v_itens.First .. v_itens.Count Loop
-		 Insert Into atb_nota_entrada_item
+		 Insert Into atb_notas_ent_itens
 			(seq_fornecedor, num_nota, seq_item, seq_material, qtd_item, val_item)
 		 Values
 			(p_seq_fornecedor, p_num_nota, vetor, v_itens(vetor).seq_material,
@@ -763,17 +822,17 @@ CREATE OR REPLACE Package Body pkg_nota_entrada Is
 
    Procedure prc_fecha_nota
    (
-	  p_seq_fornecedor In atb_nota_entrada.seq_fornecedor%Type,
-	  p_num_nota       In atb_nota_entrada.num_nota%Type
+	  p_seq_fornecedor In atb_notas_ent.seq_fornecedor%Type,
+	  p_num_nota       In atb_notas_ent.num_nota%Type
    ) Is
    
-	  v_dat_compra atb_nota_entrada.dat_compra%Type;
-	  v_val_compra atb_nota_entrada.val_compra%Type;
-	  v_sta_nota   atb_nota_entrada.sta_nota%Type;
+	  v_dat_compra atb_notas_ent.dat_compra%Type;
+	  v_val_compra atb_notas_ent.val_compra%Type;
+	  v_sta_nota   atb_notas_ent.sta_nota%Type;
    
 	  Cursor c_itens Is
 		 Select seq_fornecedor, num_nota, seq_item, seq_material, qtd_item, val_item
-		 From   atb_nota_entrada_item
+		 From   atb_notas_ent_itens
 		 Where  seq_fornecedor = p_seq_fornecedor And
 				num_nota = p_num_nota
 		 Order  By seq_item;
@@ -783,7 +842,7 @@ CREATE OR REPLACE Package Body pkg_nota_entrada Is
 	  Begin
 		 Select dat_compra, val_compra, sta_nota
 		 Into   v_dat_compra, v_val_compra, v_sta_nota
-		 From   atb_nota_entrada
+		 From   atb_notas_ent
 		 Where  seq_fornecedor = p_seq_fornecedor And
 				num_nota = p_num_nota;
 	  
@@ -796,7 +855,7 @@ CREATE OR REPLACE Package Body pkg_nota_entrada Is
 	  For rec In c_itens Loop
 	  
 		 Begin
-			pkg_material.prc_calc_estoque(p_seq_material => rec.seq_material,
+			pkg_materiais.prc_calc_estoque(p_seq_material => rec.seq_material,
 										  p_dat_lancamento => v_dat_compra);
 		 Exception
 			When Others Then
@@ -805,7 +864,7 @@ CREATE OR REPLACE Package Body pkg_nota_entrada Is
 	  
 	  End Loop;
    
-	  Update atb_nota_entrada
+	  Update atb_notas_ent
 	  Set    sta_nota = 'F'
 	  Where  seq_fornecedor = p_seq_fornecedor And
 			 num_nota = p_num_nota;
@@ -825,7 +884,7 @@ End pkg_nota_entrada;
 SHOW ERRORS;
 
 
-CREATE OR REPLACE Package Body pkg_material Is
+CREATE OR REPLACE Package Body pkg_materiais Is
 
    -- Author  : CARLOS
    -- Created : 04/02/2021 16:21:11
@@ -833,13 +892,13 @@ CREATE OR REPLACE Package Body pkg_material Is
 
    Procedure prc_associar_material
    (
-	  p_seq_fornecedor    In atb_fornecedor.seq_fornecedor%Type,
-	  p_seq_material      In atb_material.seq_material%Type,
-	  p_qtd_maxima_compra In atb_fornecedor_material.qtd_maxima_compra%Type,
-	  p_val_preco_maximo  In atb_fornecedor_material.val_preco_maximo%Type
+	  p_seq_fornecedor    In atb_fornecedores.seq_fornecedor%Type,
+	  p_seq_material      In atb_materiais.seq_material%Type,
+	  p_qtd_maxima_compra In atb_fornecedores_mat.qtd_maxima_compra%Type,
+	  p_val_preco_maximo  In atb_fornecedores_mat.val_preco_maximo%Type
    ) Is
    Begin
-	  Insert Into atb_fornecedor_material
+	  Insert Into atb_fornecedores_mat
 		 (seq_fornecedor, seq_material, dat_cadastro, nom_usuario, qtd_maxima_compra,
 		  val_preco_maximo)
 	  Values
@@ -859,14 +918,14 @@ CREATE OR REPLACE Package Body pkg_material Is
    --+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
    Procedure prc_calc_estoque
    (
-	  p_seq_material   In atb_material.seq_material%Type,
-	  p_dat_lancamento In atb_nota_entrada.dat_compra%Type
+	  p_seq_material   In atb_materiais.seq_material%Type,
+	  p_dat_lancamento In atb_notas_ent.dat_compra%Type
    ) Is
    
 	  v_custo_medio    Number;
-	  v_dat_referencia atb_material_saldos.dat_referencia%Type;
-	  v_qtd_saldo      atb_material_saldos.qtd_saldo%Type;
-	  v_val_saldo      atb_material_saldos.val_saldo%Type;
+	  v_dat_referencia atb_materiais_saldos.dat_referencia%Type;
+	  v_qtd_saldo      atb_materiais_saldos.qtd_saldo%Type;
+	  v_val_saldo      atb_materiais_saldos.val_saldo%Type;
    
 	  Cursor c_lcto Is
 		 Select seq_material, dat_lancto, tpo_lancto, qtd_lancto, val_lancto, num_requisicao,
@@ -882,9 +941,9 @@ CREATE OR REPLACE Package Body pkg_material Is
 		 -- Seleciona o ultimo mes ref (ultimo dia do mes)
 		 Select dat_referencia, qtd_saldo, val_saldo
 		 Into   v_dat_referencia, v_qtd_saldo, v_val_saldo
-		 From   atb_material_saldos sl,
+		 From   atb_materiais_saldos sl,
 				(Select Max(dat_referencia) maximo
-				  From   atb_material_saldos
+				  From   atb_materiais_saldos
 				  Where  seq_material = p_seq_material And
 						 dat_referencia < p_dat_lancamento) x
 		 Where  seq_material = p_seq_material And
@@ -899,7 +958,7 @@ CREATE OR REPLACE Package Body pkg_material Is
 		 When no_data_found Then
 			-- se não existir cria com valor zeraso.
 			v_dat_referencia := last_day(add_months(p_dat_lancamento, -1));
-			Insert Into atb_material_saldos
+			Insert Into atb_materiais_saldos
 			   (seq_material, dat_referencia, qtd_saldo, val_saldo)
 			Values
 			   (p_seq_material, v_dat_referencia, 0, 0);
@@ -915,10 +974,10 @@ CREATE OR REPLACE Package Body pkg_material Is
 		 If months_between(r_lcto.dat_lancto, v_dat_referencia) > 1 Then
 			While months_between(r_lcto.dat_lancto, v_dat_referencia) > 1 Loop
 			   v_dat_referencia := last_day(add_months(v_dat_referencia, 1));
-			   Delete atb_material_saldos
+			   Delete atb_materiais_saldos
 			   Where  seq_material = p_seq_material And
 					  dat_referencia = v_dat_referencia;
-			   Insert Into atb_material_saldos
+			   Insert Into atb_materiais_saldos
 				  (seq_material, dat_referencia, qtd_saldo, val_saldo)
 			   Values
 				  (p_seq_material, v_dat_referencia, v_qtd_saldo, v_val_saldo);
@@ -943,7 +1002,7 @@ CREATE OR REPLACE Package Body pkg_material Is
 			r_lcto.val_lancto := r_lcto.qtd_lancto * v_custo_medio;
 			v_val_saldo       := nvl(v_val_saldo, 0) - r_lcto.val_lancto;
 		 
-			Update atb_requisicao_item
+			Update atb_requisicoes_itens
 			Set    val_material = r_lcto.val_lancto
 			Where  num_requisicao = r_lcto.num_requisicao And
 				   num_item = r_lcto.num_item;
@@ -955,10 +1014,10 @@ CREATE OR REPLACE Package Body pkg_material Is
 	  If months_between(p_dat_lancamento, v_dat_referencia) > 1 Then
 		 While months_between(p_dat_lancamento, v_dat_referencia) > 1 Loop
 			v_dat_referencia := last_day(add_months(v_dat_referencia, 1));
-			Delete atb_material_saldos
+			Delete atb_materiais_saldos
 			Where  seq_material = p_seq_material And
 				   dat_referencia = v_dat_referencia;
-			Insert Into atb_material_saldos
+			Insert Into atb_materiais_saldos
 			   (seq_material, dat_referencia, qtd_saldo, val_saldo)
 			Values
 			   (p_seq_material, v_dat_referencia, v_qtd_saldo, v_val_saldo);
@@ -967,8 +1026,8 @@ CREATE OR REPLACE Package Body pkg_material Is
 	  
 	  End If;
    
-	  --alterar saldos ATB_MATERIAL
-	  Update atb_material
+	  --alterar saldos atb_materiais
+	  Update atb_materiais
 	  Set    qtd_estoque = v_qtd_saldo,
 			 val_estoque = v_val_saldo,
 			 val_unitario = v_custo_medio
@@ -984,8 +1043,8 @@ CREATE OR REPLACE Package Body pkg_material Is
 
    Function fnc_rec_valores
    (
-	  p_seq_material   In atb_material.seq_material%Type,
-	  p_dat_lancamento In atb_nota_entrada.dat_compra%Type,
+	  p_seq_material   In atb_materiais.seq_material%Type,
+	  p_dat_lancamento In atb_notas_ent.dat_compra%Type,
 	  p_tpo_valor      In Number
    ) Return Number Is
    
@@ -994,9 +1053,9 @@ CREATE OR REPLACE Package Body pkg_material Is
 	  --#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#--#
    
 	  v_custo_medio    Number;
-	  v_dat_referencia atb_material_saldos.dat_referencia%Type;
-	  v_qtd_saldo      atb_material_saldos.qtd_saldo%Type;
-	  v_val_saldo      atb_material_saldos.val_saldo%Type;
+	  v_dat_referencia atb_materiais_saldos.dat_referencia%Type;
+	  v_qtd_saldo      atb_materiais_saldos.qtd_saldo%Type;
+	  v_val_saldo      atb_materiais_saldos.val_saldo%Type;
    
 	  Cursor c_lcto Is
 		 Select seq_material, dat_lancto, tpo_lancto, qtd_lancto, val_lancto
@@ -1012,9 +1071,9 @@ CREATE OR REPLACE Package Body pkg_material Is
 		 -- Seleciona o ultimo mes ref (ultimo dia do mes)
 		 Select dat_referencia, qtd_saldo, val_saldo
 		 Into   v_dat_referencia, v_qtd_saldo, v_val_saldo
-		 From   atb_material_saldos sl,
+		 From   atb_materiais_saldos sl,
 				(Select Max(dat_referencia) maximo
-				  From   atb_material_saldos
+				  From   atb_materiais_saldos
 				  Where  seq_material = p_seq_material And
 						 dat_referencia < p_dat_lancamento) x
 		 Where  seq_material = p_seq_material And
@@ -1029,7 +1088,7 @@ CREATE OR REPLACE Package Body pkg_material Is
 		 When no_data_found Then
 			-- se não existir cria com valor zeraso.
 			v_dat_referencia := last_day(add_months(p_dat_lancamento, -1));
-			Insert Into atb_material_saldos
+			Insert Into atb_materiais_saldos
 			   (seq_material, dat_referencia, qtd_saldo, val_saldo)
 			Values
 			   (p_seq_material, v_dat_referencia, 0, 0);
@@ -1088,28 +1147,28 @@ CREATE OR REPLACE Package Body pkg_material Is
    --*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*--*
    Procedure prc_fecha_nota
    (
-	  p_seq_fornecedor In atb_nota_entrada.seq_fornecedor%Type,
-	  p_num_nota       In atb_nota_entrada.num_nota%Type
+	  p_seq_fornecedor In atb_notas_ent.seq_fornecedor%Type,
+	  p_num_nota       In atb_notas_ent.num_nota%Type
    ) Is
    
 	  Cursor c_itens Is
 		 Select seq_fornecedor, num_nota, seq_item, seq_material, qtd_item, val_item
-		 From   atb_nota_entrada_item
+		 From   atb_notas_ent_itens
 		 Where  seq_fornecedor = p_seq_fornecedor And
 				num_nota = p_num_nota
 		 Order  By seq_item;
    
 	  r_itens      c_itens%Rowtype;
-	  v_dat_compra atb_nota_entrada.dat_compra%Type;
+	  v_dat_compra atb_notas_ent.dat_compra%Type;
    
    Begin
 	  Select dat_compra
 	  Into   v_dat_compra
-	  From   atb_nota_entrada
+	  From   atb_notas_ent
 	  Where  seq_fornecedor = p_seq_fornecedor And
 			 num_nota = p_num_nota;
    
-	  Update atb_nota_entrada ne
+	  Update atb_notas_ent ne
 	  Set    ne.sta_nota = 'F'
 	  Where  ne.seq_fornecedor = p_seq_fornecedor And
 			 ne.num_nota = p_num_nota;
@@ -1117,11 +1176,11 @@ CREATE OR REPLACE Package Body pkg_material Is
    
    End prc_fecha_nota;
 
-   Procedure prc_fecha_requisicao(p_num_requisicao In atb_requisicao.num_requisicao%Type) Is
+   Procedure prc_fecha_requisicao(p_num_requisicao In atb_requisicoes.num_requisicao%Type) Is
    
 	  Cursor c_itens Is
 		 Select rq.dat_requisicao, ri.num_item, ri.seq_material, ri.qtd_material
-		 From   atb_requisicao rq, atb_requisicao_item ri
+		 From   atb_requisicoes rq, atb_requisicoes_itens ri
 		 Where  rq.num_requisicao = ri.num_requisicao And
 				ri.num_requisicao = p_num_requisicao
 		 Order  By ri.num_item;
@@ -1130,25 +1189,25 @@ CREATE OR REPLACE Package Body pkg_material Is
    
    Begin
    
-	  Update atb_requisicao re
+	  Update atb_requisicoes re
 	  Set    re.sta_requisicao = 'F'
 	  Where  re.num_requisicao = p_num_requisicao;
 	  Commit;
    
    End prc_fecha_requisicao;
 
-   Procedure prc_fechamento_estoque(p_dat_lancamento In atb_nota_entrada.dat_compra%Type) Is
+   Procedure prc_fechamento_estoque(p_dat_lancamento In atb_notas_ent.dat_compra%Type) Is
    
 	  Cursor c_mat Is
 		 Select seq_material
-		 From   atb_material;
+		 From   atb_materiais;
    
    Begin
    
 	  For r_mat In c_mat Loop
 	  
 		 Begin
-			pkg_material.prc_calc_estoque(p_seq_material => r_mat.seq_material,
+			pkg_materiais.prc_calc_estoque(p_seq_material => r_mat.seq_material,
 										  p_dat_lancamento => p_dat_lancamento);
 		 Exception
 			When Others Then
@@ -1164,7 +1223,7 @@ CREATE OR REPLACE Package Body pkg_material Is
    
 	  v_aux         Number;
 	  v_tabela      Number := 0;
-	  v_seq_sla_det atb_material_sla_det.seq_sla_det%Type;
+	  v_seq_sla_det atb_materiais_sla_det.seq_sla_det%Type;
    
 	  v_data_exec   Varchar2(20) := to_char(p_dt_exec, 'DD/MM/YYYY HH24:MI:SS');
 	  v_data_sla    Varchar2(20);
@@ -1175,9 +1234,9 @@ CREATE OR REPLACE Package Body pkg_material Is
    
 	  v_prox_nivel Number := 0;
    
-	  v_val_nivel    atb_material_sla.val_nivel%Type;
-	  v_qtd_horas    atb_material_sla.qtd_horas%Type;
-	  v_nom_cor_html atb_material_sla.nom_cor_html%Type;
+	  v_val_nivel    atb_materiais_sla.val_nivel%Type;
+	  v_qtd_horas    atb_materiais_sla.qtd_horas%Type;
+	  v_nom_cor_html atb_materiais_sla.nom_cor_html%Type;
    
 	  corpo Long;
    
@@ -1185,7 +1244,7 @@ CREATE OR REPLACE Package Body pkg_material Is
    
 	  Select Count(*)
 	  Into   v_aux
-	  From   atb_material_sla_det
+	  From   atb_materiais_sla_det
 	  Where  sta_sla = 'P' And
 			 p_dt_exec > dat_limite_sla;
    
@@ -1221,9 +1280,9 @@ CREATE OR REPLACE Package Body pkg_material Is
 		 -- Relação de niveis de sla, vai trazer a cor produtos
 	  
 		 For i In (Select Distinct a.val_nivel, a.nom_titulo_tab sla, a.nom_cor_html
-				   From   atb_material_sla a
+				   From   atb_materiais_sla a
 				   Where  Exists (Select 1
-						   From   atb_material_sla_det b
+						   From   atb_materiais_sla_det b
 						   Where  a.val_nivel = b.val_nivel And
 								  a.nom_cor_html = b.nom_cor_html And
 								  b.sta_sla = 'P')
@@ -1258,7 +1317,7 @@ CREATE OR REPLACE Package Body pkg_material Is
 			For j In (Select b.seq_material, b.dat_sla, a.seq_sla_det, a.val_nivel, a.dat_limite_sla,
 							 nom_material, dm_unidade_medida aua_un, qtd_minimo, qtd_maximo,
 							 qtd_estoque, val_estoque
-					  From   atb_material_sla_det a, atb_material b
+					  From   atb_materiais_sla_det a, atb_materiais b
 					  Where  a.seq_material = b.seq_material And
 							 a.sta_sla = 'P' And
 							 a.val_nivel = i.val_nivel And
@@ -1286,9 +1345,9 @@ CREATE OR REPLACE Package Body pkg_material Is
 						-- Le proximo nivel se não existir usa o proprio (Ultimo SLA)
 						Select val_nivel, qtd_horas, nom_cor_html
 						Into   v_val_nivel, v_qtd_horas, v_nom_cor_html
-						From   atb_material_sla,
+						From   atb_materiais_sla,
 							   (Select Min(val_nivel) prox_nivel
-								 From   atb_material_sla
+								 From   atb_materiais_sla
 								 Where  seq_material = j.seq_material And
 										(p_dt_exec - j.dat_sla) * 24 < qtd_horas) pr
 						Where  seq_material = j.seq_material And
@@ -1298,20 +1357,20 @@ CREATE OR REPLACE Package Body pkg_material Is
 						When no_data_found Then
 						   Select val_nivel, qtd_horas, nom_cor_html
 						   Into   v_val_nivel, v_qtd_horas, v_nom_cor_html
-						   From   atb_material_sla,
+						   From   atb_materiais_sla,
 								  (Select Max(val_nivel) ult_nivel
-									From   atb_material_sla
+									From   atb_materiais_sla
 									Where  seq_material = j.seq_material) pr
 						   Where  seq_material = j.seq_material And
 								  val_nivel = pr.ult_nivel;
 					 End;
 				  
-					 Update atb_material_sla_det
+					 Update atb_materiais_sla_det
 					 Set    sta_sla     = 'E',
 							dat_emissao = Sysdate
 					 Where  seq_sla_det = j.seq_sla_det;
 				  
-					 Insert Into atb_material_sla_det
+					 Insert Into atb_materiais_sla_det
 						(seq_sla_det, seq_material, val_nivel, nom_cor_html, dat_limite_sla,
 						 sta_sla, dat_emissao)
 					 Values
@@ -1327,12 +1386,12 @@ CREATE OR REPLACE Package Body pkg_material Is
 				  -- mantem o mesmo nivel 
 			   
 				  Begin
-					 Update atb_material_sla_det
+					 Update atb_materiais_sla_det
 					 Set    sta_sla = 'E',
 							dat_emissao = Sysdate
 					 Where  seq_sla_det = j.seq_sla_det;
 				  
-					 Insert Into atb_material_sla_det
+					 Insert Into atb_materiais_sla_det
 						(seq_sla_det, seq_material, val_nivel, nom_cor_html, dat_limite_sla,
 						 sta_sla, dat_emissao)
 					 Values
@@ -1366,7 +1425,7 @@ CREATE OR REPLACE Package Body pkg_material Is
    
 	  --Delete ab_email_sla_manual;
    
-	  Insert Into atb_material_sla_email
+	  Insert Into atb_materiais_sla_email
 		 (seq_email, dsc_assunto, dsc_corpo, sta_email)
 	  Values
 		 (Null, 'SLA', corpo, 'P');
@@ -1385,7 +1444,7 @@ CREATE OR REPLACE Package Body pkg_material Is
 	  
    End prc_materiais_sla;
 
-End pkg_material;
+End pkg_materiais;
 /
 
 SHOW ERRORS;
@@ -1638,18 +1697,18 @@ AS
 Select   ni.seq_material,   mae.nom_material, mae.dm_unidade_medida,
             ne.dat_compra,    'E' tpo_lancamento,
      qtd_item,       val_item,
-       pkg_material.fnc_rec_valores(p_seq_material => ni.seq_material,
+       pkg_materiais.fnc_rec_valores(p_seq_material => ni.seq_material,
                 p_dat_lancamento => ne.dat_compra,
         p_tpo_valor => 1) qtd_saldo,
-       pkg_material.fnc_rec_valores(p_seq_material => ni.seq_material,
+       pkg_materiais.fnc_rec_valores(p_seq_material => ni.seq_material,
                 p_dat_lancamento => ne.dat_compra,
-        p_tpo_valor => 2) val_saldo,
-       pkg_material.fnc_rec_valores(p_seq_material => ni.seq_material,
+        p_tpo_valor => 2)  val_saldo,
+       pkg_materiais.fnc_rec_valores(p_seq_material => ni.seq_material,
                 p_dat_lancamento => ne.dat_compra,
-        p_tpo_valor => 3) custo_medio,
+        p_tpo_valor => 3)  custo_medio,
      ni.seq_fornecedor,   ni.num_nota,     ni.seq_item,
      null, null
-From   artbox.atb_nota_entrada ne, artbox.atb_nota_entrada_item ni, artbox.atb_material mae
+From   artbox.atb_notas_ent ne, artbox.atb_notas_ent_itens ni, artbox.atb_materiais mae
 Where  ne.seq_fornecedor = ni.seq_fornecedor And
     ni.seq_material = mae.seq_material and
        ne.num_nota = ni.num_nota
@@ -1657,38 +1716,64 @@ Union all
 Select   ri.seq_material,   mas.nom_material, mas.dm_unidade_medida,
        dat_requisicao,   'S' tpo_lancamento,
      qtd_material,      val_material,
-       pkg_material.fnc_rec_valores(p_seq_material => ri.seq_material,
+       pkg_materiais.fnc_rec_valores(p_seq_material => ri.seq_material,
                 p_dat_lancamento => re.dat_requisicao,
         p_tpo_valor => 1) qtd_saldo,
-       pkg_material.fnc_rec_valores(p_seq_material => ri.seq_material,
+       pkg_materiais.fnc_rec_valores(p_seq_material => ri.seq_material,
                 p_dat_lancamento => re.dat_requisicao,
-        p_tpo_valor => 2) val_saldo,
-       pkg_material.fnc_rec_valores(p_seq_material => ri.seq_material,
+        p_tpo_valor => 2)  val_saldo,
+       pkg_materiais.fnc_rec_valores(p_seq_material => ri.seq_material,
                 p_dat_lancamento => re.dat_requisicao,
         p_tpo_valor => 3) custo_medio,
          null,       null,          null,
         ri.num_requisicao, ri.num_item
-From   artbox.atb_requisicao re, artbox.atb_requisicao_item ri, artbox.atb_material mas
+From   artbox.atb_requisicoes re, artbox.atb_requisicoes_itens ri, artbox.atb_materiais mas
 Where  re.num_requisicao = ri.num_requisicao and
     ri.seq_material = mas.seq_material
 Order  By seq_material, dat_compra, tpo_lancamento
     With Read Only;
 
 
-CREATE OR REPLACE TRIGGER ATB_MATERIAL_SLA_EMAIL_bi
-   before insert on ATB_MATERIAL_SLA_EMAIL
-   for each row
-begin
+CREATE OR REPLACE TRIGGER TRG_ATB_FORNECEDOR_BIU
+   BEFORE INSERT OR UPDATE ON ATB_FORNECEDORES
+   FOR EACH ROW
+BEGIN
 
-  --+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-  -- Recuperar Sequence
-  --+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+	 --+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+	 -- Sequência
+	 --+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+	 IF :NEW.SEQ_FORNECEDOR IS NULL THEN
+			SELECT SQ_ATB_FORNECEDOR.NEXTVAL INTO :NEW.SEQ_FORNECEDOR FROM DUAL;
+	 END IF;
 
-    if :new.SEQ_EMAIL is null then
-       select SQ_ATB_MATERIAL_SLA_EMAIL.nextval into :new.SEQ_EMAIL
-            from dual;
-    end if;
+EXCEPTION
+	 WHEN OTHERS THEN
+			RAISE_APPLICATION_ERROR(-20000, 'Erro ao inserir sequence. TRG_ATB_FORNECEDOR_BIU' || SQLERRM);
+	 
+END TRG_ATB_FORNECEDOR_BIU;
+/
+SHOW ERRORS;
 
+
+
+CREATE OR REPLACE TRIGGER trg_atb_material_BIU
+   Before Insert or update On ATB_MATERIAIS
+   For Each Row
+Begin
+
+	 --+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+	 -- Sequência
+	 --+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+	 If :New.seq_material Is Null Then
+			Select sq_atb_material.Nextval Into :New.seq_material From dual;
+	 End If;
+
+	 :New.nom_usuario := upper(User);
+
+Exception
+	 When Others Then
+			raise_application_error(-20000, 'Erro ao inserir sequence. TRG_PT_DOMINIOS_biu' || Sqlerrm);
+	 
 End;
 /
 SHOW ERRORS;
@@ -1736,44 +1821,21 @@ SHOW ERRORS;
 
 
 
-CREATE OR REPLACE TRIGGER ATB_MATERIAL_SLA_DET_BI
- BEFORE INSERT
- ON ATB_MATERIAL_SLA_DET
- REFERENCING OLD AS OLD NEW AS NEW
- FOR EACH ROW
-Begin
-
-  --+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-  -- Recuperar Sequence
-  --+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-
-  If :New.SEQ_SLA_DET Is Null Then
-    Select SQ_ATB_MATERIAL_SLA_DET.Nextval Into :New.SEQ_SLA_DET From dual;
-  End If;
-
-End;
-/
-SHOW ERRORS;
-
-
-
-CREATE OR REPLACE TRIGGER trg_atb_material_BIU
-   Before Insert or update On ATB_MATERIAL
+CREATE OR REPLACE TRIGGER trg_atb_clientes_biu
+   Before Insert or update On atb_clientes
    For Each Row
 Begin
 
 	 --+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 	 -- Sequência
 	 --+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-	 If :New.seq_material Is Null Then
-			Select sq_atb_material.Nextval Into :New.seq_material From dual;
+	 If :New.seq_cliente Is Null Then
+			Select sq_atb_clientes.Nextval Into :New.seq_cliente From dual;
 	 End If;
-
-	 :New.nom_usuario := upper(User);
 
 Exception
 	 When Others Then
-			raise_application_error(-20000, 'Erro ao inserir sequence. TRG_PT_DOMINIOS_biu' || Sqlerrm);
+			raise_application_error(-20000, 'Erro ao inserir sequence. trg_atb_clientes_biu' || Sqlerrm);
 	 
 End;
 /
@@ -1826,46 +1888,158 @@ SHOW ERRORS;
 
 
 
-CREATE OR REPLACE TRIGGER TRG_ATB_FORNECEDOR_BIU
-   BEFORE INSERT OR UPDATE ON ATB_FORNECEDOR
-   FOR EACH ROW
-BEGIN
+CREATE OR REPLACE TRIGGER atb_materiais_biu
+   before Insert or update  of qtd_estoque,  qtd_minimo
+	  On ATB_MATERIAIS
+   For Each Row
+Declare
 
-	 --+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-	 -- Sequência
-	 --+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-	 IF :NEW.SEQ_FORNECEDOR IS NULL THEN
-			SELECT SQ_ATB_FORNECEDOR.NEXTVAL INTO :NEW.SEQ_FORNECEDOR FROM DUAL;
-	 END IF;
+   v_aux          Number := 0;
+   v_val_nivel    atb_materiais_sla.val_nivel%Type;
+   v_qtd_horas    atb_materiais_sla.qtd_horas%Type;
+   v_nom_cor_html atb_materiais_sla.nom_cor_html%Type;
 
-EXCEPTION
-	 WHEN OTHERS THEN
-			RAISE_APPLICATION_ERROR(-20000, 'Erro ao inserir sequence. TRG_ATB_FORNECEDOR_BIU' || SQLERRM);
+Begin
+
+   -- Verificar se estoque esta abaixo do minimo
+   If :New.qtd_estoque < :New.qtd_minimo And
+	  :New.dat_sla Is Null Then
+   
+	  :New.dat_sla := Sysdate;
+   
+	  -- Incluir material em lista de pendencia
+	  Select val_nivel, qtd_horas, nom_cor_html
+	  Into   v_val_nivel, v_qtd_horas, v_nom_cor_html
+	  From   atb_materiais_sla a
+	  Where  a.seq_material = :New.seq_material And
+			 val_nivel = (Select Min(val_nivel) minimo
+						  From   atb_materiais_sla b
+						  Where  a.seq_material = b.seq_material);
+   
+	  Insert Into atb_materiais_sla_det
+		 (seq_sla_det, seq_material, val_nivel, nom_cor_html, dat_LIMITE_SLA, sta_sla)
+	  Values
+		 (Null, :New.seq_material, v_val_nivel, v_nom_cor_html, Sysdate + (v_qtd_horas / 24), 'P');
+   
+	  -- Estoque acima do minimo
+   Elsif :New.qtd_estoque >= :New.qtd_minimo And
+		 :New.dat_sla Is Not Null Then
+   
+	  :New.dat_sla := null;
+   
+	  -- Ver se material já esta em SLA
+	  Select Count(*)
+	  Into   v_aux
+	  From   atb_materiais_sla_det
+	  Where  seq_material = :New.seq_material And
+			 sta_sla = 'P';
+   
+	  If v_aux > 0 Then
+	  
+		 -- Retirar material de lista de pendencias
+	  
+		 Update atb_materiais_sla_det
+		 Set    sta_sla = 'C'
+		 Where  seq_material = :New.seq_material And
+				sta_sla = 'P';
+	  
+	  End If;
+   
+   End If;
+
+End;
+/
+SHOW ERRORS;
+
+
+
+CREATE OR REPLACE TRIGGER trg_ATB_FORNECEDOR_MAT_biu
+   before insert or update on ATB_FORNECEDORES_MAT
+   for each row
+declare
 	 
-END TRG_ATB_FORNECEDOR_BIU;
+	 v_dat_cadastro		atb_materiais.dat_cadastro%type;
+
+Begin
+
+	Select dat_cadastro
+	  Into v_dat_cadastro
+	  From atb_materiais
+	 Where seq_material = :New.seq_material;
+
+	--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+	-- Verificar se data de Associação é maior que a data de cadastro
+	--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+	If :New.dat_cadastro < v_dat_cadastro Then
+		raise_application_error (-20001, 'Atenção Data de associação menor que data de cadastro do Material!');
+	End If;
+
+	
+End trg_atb_fornecedor_biu;
+/
+SHOW ERRORS;
+
+
+
+CREATE OR REPLACE TRIGGER ATB_MATERIAIS_SLA_DET_BI
+ BEFORE INSERT
+ ON ATB_MATERIAIS_SLA_DET
+ REFERENCING OLD AS OLD NEW AS NEW
+ FOR EACH ROW
+Begin
+
+  --+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+  -- Recuperar Sequence
+  --+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+
+  If :New.SEQ_SLA_DET Is Null Then
+    Select SQ_ATB_MATERIAL_SLA_DET.Nextval Into :New.SEQ_SLA_DET From dual;
+  End If;
+
+End;
+/
+SHOW ERRORS;
+
+
+
+CREATE OR REPLACE TRIGGER ATB_MATERIAIS_SLA_EMAIL_bi
+   before insert on ATB_MATERIAIS_SLA_EMAIL
+   for each row
+begin
+
+  --+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+  -- Recuperar Sequence
+  --+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+
+    if :new.SEQ_EMAIL is null then
+       select SQ_ATB_MATERIAL_SLA_EMAIL.nextval into :new.SEQ_EMAIL
+            from dual;
+    end if;
+
+End;
 /
 SHOW ERRORS;
 
 
 
 CREATE OR REPLACE TRIGGER trg_atb_nota_entrada_item_biu
-   before insert or update on atb_nota_entrada_item
+   before insert or update on ATB_NOTAS_ENT_ITENS
    for each row
 declare
 	 
-	 v_dat_cadastro		atb_material.dat_cadastro%type;
-	 v_dat_compra		atb_nota_entrada.dat_compra%type;
+	 v_dat_cadastro		atb_materiais.dat_cadastro%type;
+	 v_dat_compra		atb_notas_ent.dat_compra%type;
 
 Begin
 	-- Le data de cadastro do material
 	Select dat_cadastro
 	  Into v_dat_cadastro
-	  From atb_material
+	  From atb_materiais
 	 Where seq_material = :New.seq_material;
 	 
 	 -- Le a data da compra do material
 	  select ne.dat_compra into v_dat_compra
-	   from atb_nota_entrada ne
+	   from atb_notas_ent ne
 	   where ne.seq_fornecedor = :new.seq_fornecedor
 	   and ne.num_nota = :new.num_nota;
 	 
@@ -1885,134 +2059,24 @@ SHOW ERRORS;
 
 
 
-CREATE OR REPLACE TRIGGER trg_ATB_FORNECEDOR_MAT_biu
-   before insert or update on ATB_FORNECEDOR_MATERIAL
-   for each row
-declare
-	 
-	 v_dat_cadastro		atb_material.dat_cadastro%type;
-
-Begin
-
-	Select dat_cadastro
-	  Into v_dat_cadastro
-	  From atb_material
-	 Where seq_material = :New.seq_material;
-
-	--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-	-- Verificar se data de Associação é maior que a data de cadastro
-	--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-	If :New.dat_cadastro < v_dat_cadastro Then
-		raise_application_error (-20001, 'Atenção Data de associação menor que data de cadastro do Material!');
-	End If;
-
-	
-End trg_atb_fornecedor_biu;
-/
-SHOW ERRORS;
-
-
-
-CREATE OR REPLACE TRIGGER atb_material_biu
-   before Insert or update  of qtd_estoque,  qtd_minimo
-	  On atb_material
-   For Each Row
-Declare
-
-   v_aux          Number := 0;
-   v_val_nivel    atb_material_sla.val_nivel%Type;
-   v_qtd_horas    atb_material_sla.qtd_horas%Type;
-   v_nom_cor_html atb_material_sla.nom_cor_html%Type;
-
-Begin
-
-   -- Verificar se estoque esta abaixo do minimo
-   If :New.qtd_estoque < :New.qtd_minimo And
-	  :New.dat_sla Is Null Then
-   
-	  :New.dat_sla := Sysdate;
-   
-	  -- Incluir material em lista de pendencia
-	  Select val_nivel, qtd_horas, nom_cor_html
-	  Into   v_val_nivel, v_qtd_horas, v_nom_cor_html
-	  From   atb_material_sla a
-	  Where  a.seq_material = :New.seq_material And
-			 val_nivel = (Select Min(val_nivel) minimo
-						  From   atb_material_sla b
-						  Where  a.seq_material = b.seq_material);
-   
-	  Insert Into atb_material_sla_det
-		 (seq_sla_det, seq_material, val_nivel, nom_cor_html, dat_LIMITE_SLA, sta_sla)
-	  Values
-		 (Null, :New.seq_material, v_val_nivel, v_nom_cor_html, Sysdate + (v_qtd_horas / 24), 'P');
-   
-	  -- Estoque acima do minimo
-   Elsif :New.qtd_estoque >= :New.qtd_minimo And
-		 :New.dat_sla Is Not Null Then
-   
-	  :New.dat_sla := null;
-   
-	  -- Ver se material já esta em SLA
-	  Select Count(*)
-	  Into   v_aux
-	  From   atb_material_sla_det
-	  Where  seq_material = :New.seq_material And
-			 sta_sla = 'P';
-   
-	  If v_aux > 0 Then
-	  
-		 -- Retirar material de lista de pendencias
-	  
-		 Update atb_material_sla_det
-		 Set    sta_sla = 'C'
-		 Where  seq_material = :New.seq_material And
-				sta_sla = 'P';
-	  
-	  End If;
-   
-   End If;
-
-End;
-/
-SHOW ERRORS;
-
-
-
-ALTER TABLE ATB_CLIENTES ADD (
-  CONSTRAINT AVCON_1619463871_DM_FL_000
- CHECK (DM_FL_BLOQ IN ('N', 'S')),
-  CONSTRAINT ATB_CLIENTES_PK
- PRIMARY KEY
- (SEQ_CLIENTE));
-
-ALTER TABLE ATB_CLIENTES_ENDERECOS ADD (
-  CONSTRAINT ATB_CLIENTES_END_PK
- PRIMARY KEY
- (SEQ_CLIENTE, CG_TPO_ENDERECO));
-
-ALTER TABLE ATB_NOTA_ENTRADA ADD (
+ALTER TABLE ATB_NOTAS_ENT ADD (
   CONSTRAINT ATB_NOTA_ENTRADA_CK01
  CHECK (sta_nota in ('A', 'F')),
   CONSTRAINT ATB_NOTA_ENTRADA_PK
  PRIMARY KEY
  (SEQ_FORNECEDOR, NUM_NOTA));
 
-ALTER TABLE ATB_PRODUTOS_SERVICOS ADD (
-  CONSTRAINT ATB_PRODUTOS_SERV_PK
- PRIMARY KEY
- (SEQ_PRODUTO, SEQ_SERVICO));
-
-ALTER TABLE ATB_REQUISICAO_ITEM ADD (
+ALTER TABLE ATB_REQUISICOES_ITENS ADD (
   CONSTRAINT ATB_REQUISICAO_ITEM_PK
  PRIMARY KEY
  (NUM_REQUISICAO, NUM_ITEM));
 
-ALTER TABLE ATB_MATERIAL_SLA ADD (
+ALTER TABLE ATB_MATERIAIS_SLA ADD (
   CONSTRAINT ATB_MATERIAL_SLA_PK
  PRIMARY KEY
  (SEQ_MATERIAL, VAL_NIVEL));
 
-ALTER TABLE ATB_MATERIAL_SLA_DET ADD (
+ALTER TABLE ATB_MATERIAIS_SLA_DET ADD (
   CONSTRAINT ATB_MATERIAL_SLA_DET_CK01
  CHECK ("STA_SLA"='P' OR "STA_SLA"='E' OR "STA_SLA"='C'),
   CONSTRAINT ATB_MATERIAL_SLA_DET_PK
@@ -2024,26 +2088,46 @@ ALTER TABLE ATB_SERVICOS_TARIFAS ADD (
  PRIMARY KEY
  (SEQ_SERVICO, DAT_VIGENCIA));
 
-ALTER TABLE ATB_JOB ADD (
-  CONSTRAINT ATB_JOB_PK
- PRIMARY KEY
- (SEQ_JOB));
-
-ALTER TABLE ATB_MATERIAL ADD (
-  CONSTRAINT ATB_MATERIAL_CK01
- CHECK (DMN_FL_BLOQ in ('S', 'N')),
-  CONSTRAINT MATERIAL_PK
- PRIMARY KEY
- (SEQ_MATERIAL));
-
-ALTER TABLE ATB_REQUISICAO ADD (
+ALTER TABLE ATB_REQUISICOES ADD (
   CONSTRAINT ATB_REQUISICAO_CK01
  CHECK (STA_REQUISICAO in ('A', 'F')),
   CONSTRAINT ATB_REQUISICAO_PK
  PRIMARY KEY
  (NUM_REQUISICAO));
 
-ALTER TABLE ATB_MATERIAL_SLA_EMAIL ADD (
+ALTER TABLE ATB_PRODUTOS_MAT ADD (
+  CONSTRAINT ATB_PRODUTOS_MAT_PK
+ PRIMARY KEY
+ (SEQ_PRODUTO, SEQ_MATERIAL));
+
+ALTER TABLE ATB_MATERIAIS_SALDOS ADD (
+  CONSTRAINT ATB_MATERIAL_SALDOS_PK
+ PRIMARY KEY
+ (SEQ_MATERIAL, DAT_REFERENCIA));
+
+ALTER TABLE ATB_FORNECEDORES_ENDERECO ADD (
+  CONSTRAINT FORNECEDOR_ENDERECO_PK
+ PRIMARY KEY
+ (SEQ_FORNECEDOR, DM_TPO_ENDERECO));
+
+ALTER TABLE ATB_PRODUTOS_SERV ADD (
+  CONSTRAINT ATB_PRODUTOS_SERV_PK
+ PRIMARY KEY
+ (SEQ_PRODUTO, SEQ_SERVICO));
+
+ALTER TABLE ATB_JOB ADD (
+  CONSTRAINT ATB_JOB_PK
+ PRIMARY KEY
+ (SEQ_JOB));
+
+ALTER TABLE ATB_MATERIAIS ADD (
+  CONSTRAINT ATB_MATERIAL_CK01
+ CHECK (DMN_FL_BLOQ in ('S', 'N')),
+  CONSTRAINT MATERIAL_PK
+ PRIMARY KEY
+ (SEQ_MATERIAL));
+
+ALTER TABLE ATB_MATERIAIS_SLA_EMAIL ADD (
   CONSTRAINT ATB_MATERIAL_SLA_EMAIL_PK
  PRIMARY KEY
  (SEQ_EMAIL));
@@ -2055,12 +2139,14 @@ ALTER TABLE ATB_PRODUTOS ADD (
  PRIMARY KEY
  (SEQ_PRODUTO));
 
-ALTER TABLE ATB_PRODUTOS_MATERIAIS ADD (
-  CONSTRAINT ATB_PRODUTOS_MAT_PK
+ALTER TABLE ATB_CLIENTES ADD (
+  CONSTRAINT AVCON_1621971014_DM_FL_000
+ CHECK (DM_FL_BLOQ IN ('N', 'S')),
+  CONSTRAINT ATB_CLIENTES_PK
  PRIMARY KEY
- (SEQ_PRODUTO, SEQ_MATERIAL));
+ (SEQ_CLIENTE));
 
-ALTER TABLE ATB_FORNECEDOR ADD (
+ALTER TABLE ATB_FORNECEDORES ADD (
   CONSTRAINT FORNECEDOR_PK
  PRIMARY KEY
  (SEQ_FORNECEDOR));
@@ -2072,22 +2158,17 @@ ALTER TABLE ATB_JOB_DET ADD (
  PRIMARY KEY
  (SEQ_JOB_DET));
 
-ALTER TABLE ATB_MATERIAL_SALDOS ADD (
-  CONSTRAINT ATB_MATERIAL_SALDOS_PK
+ALTER TABLE ATB_CLIENTES_ENDERECOS ADD (
+  CONSTRAINT ATB_CLIENTES_END_PK
  PRIMARY KEY
- (SEQ_MATERIAL, DAT_REFERENCIA));
+ (SEQ_CLIENTE, DM_TPO_ENDERECO));
 
-ALTER TABLE ATB_FORNECEDOR_ENDERECO ADD (
-  CONSTRAINT FORNECEDOR_ENDERECO_PK
- PRIMARY KEY
- (SEQ_FORNECEDOR, DM_TPO_ENDERECO));
-
-ALTER TABLE ATB_NOTA_ENTRADA_ITEM ADD (
+ALTER TABLE ATB_NOTAS_ENT_ITENS ADD (
   CONSTRAINT ATB_NFE_ITEM_PK
  PRIMARY KEY
  (SEQ_FORNECEDOR, NUM_NOTA, SEQ_ITEM));
 
-ALTER TABLE ATB_FORNECEDOR_MATERIAL ADD (
+ALTER TABLE ATB_FORNECEDORES_MAT ADD (
   CONSTRAINT FORNECEDOR_MAT_PK
  PRIMARY KEY
  (SEQ_FORNECEDOR, SEQ_MATERIAL));
@@ -2099,87 +2180,90 @@ ALTER TABLE ATB_SERVICOS ADD (
  PRIMARY KEY
  (SEQ_SERVICO));
 
-ALTER TABLE ATB_CLIENTES_ENDERECOS ADD (
-  CONSTRAINT ACO_ACE_FK 
- FOREIGN KEY (SEQ_CLIENTE) 
- REFERENCES ATB_CLIENTES (SEQ_CLIENTE));
-
-ALTER TABLE ATB_NOTA_ENTRADA ADD (
+ALTER TABLE ATB_NOTAS_ENT ADD (
   CONSTRAINT ANA_FRN_FK 
  FOREIGN KEY (SEQ_FORNECEDOR) 
- REFERENCES ATB_FORNECEDOR (SEQ_FORNECEDOR));
+ REFERENCES);
 
-ALTER TABLE ATB_PRODUTOS_SERVICOS ADD (
-  CONSTRAINT APO_ASO_FK 
- FOREIGN KEY (SEQ_SERVICO) 
- REFERENCES ATB_SERVICOS (SEQ_SERVICO),
-  CONSTRAINT ATB_PRODUTOS_SERV_FK01 
- FOREIGN KEY (SEQ_PRODUTO) 
- REFERENCES ATB_PRODUTOS (SEQ_PRODUTO));
-
-ALTER TABLE ATB_REQUISICAO_ITEM ADD (
+ALTER TABLE ATB_REQUISICOES_ITENS ADD (
   CONSTRAINT ARM_MAL_FK 
  FOREIGN KEY (SEQ_MATERIAL) 
- REFERENCES ATB_MATERIAL (SEQ_MATERIAL),
+ REFERENCES,
   CONSTRAINT ARM_ARO_FK 
  FOREIGN KEY (NUM_REQUISICAO) 
- REFERENCES ATB_REQUISICAO (NUM_REQUISICAO)
+ REFERENCES 
     ON DELETE CASCADE);
 
-ALTER TABLE ATB_MATERIAL_SLA ADD (
-  CONSTRAINT ATB_MATERIAL_SLA_FK 
+ALTER TABLE ATB_MATERIAIS_SLA ADD (
+  CONSTRAINT ATB_MATERIAL_SLA_FK01 
  FOREIGN KEY (SEQ_MATERIAL) 
- REFERENCES ATB_MATERIAL (SEQ_MATERIAL));
+ REFERENCES 
+    ON DELETE CASCADE);
 
-ALTER TABLE ATB_MATERIAL_SLA_DET ADD (
+ALTER TABLE ATB_MATERIAIS_SLA_DET ADD (
   CONSTRAINT ATB_MATERIAL_SLA_DET_FK 
  FOREIGN KEY (SEQ_MATERIAL) 
- REFERENCES ATB_MATERIAL (SEQ_MATERIAL),
+ REFERENCES,
   CONSTRAINT ATB_MATERIAL_SLA_DET_FK01 
  FOREIGN KEY (SEQ_MATERIAL, VAL_NIVEL) 
- REFERENCES ATB_MATERIAL_SLA (SEQ_MATERIAL,VAL_NIVEL));
+ REFERENCES);
 
 ALTER TABLE ATB_SERVICOS_TARIFAS ADD (
   CONSTRAINT ATB_SERVICOS_TAR_FK01 
  FOREIGN KEY (SEQ_SERVICO) 
- REFERENCES ATB_SERVICOS (SEQ_SERVICO));
+ REFERENCES);
 
-ALTER TABLE ATB_PRODUTOS_MATERIAIS ADD (
+ALTER TABLE ATB_PRODUTOS_MAT ADD (
   CONSTRAINT ATB_PRODUTOS_MAT_FK01 
  FOREIGN KEY (SEQ_PRODUTO) 
- REFERENCES ATB_PRODUTOS (SEQ_PRODUTO),
+ REFERENCES,
   CONSTRAINT ATB_PRODUTOS_MAT_FK02 
  FOREIGN KEY (SEQ_MATERIAL) 
- REFERENCES ATB_MATERIAL (SEQ_MATERIAL));
+ REFERENCES);
+
+ALTER TABLE ATB_MATERIAIS_SALDOS ADD (
+  CONSTRAINT AMO_MAL_FK 
+ FOREIGN KEY (SEQ_MATERIAL) 
+ REFERENCES);
+
+ALTER TABLE ATB_FORNECEDORES_ENDERECO ADD (
+  CONSTRAINT FEO_FRN_FK 
+ FOREIGN KEY (SEQ_FORNECEDOR) 
+ REFERENCES 
+    ON DELETE CASCADE);
+
+ALTER TABLE ATB_PRODUTOS_SERV ADD (
+  CONSTRAINT APO_ASO_FK 
+ FOREIGN KEY (SEQ_SERVICO) 
+ REFERENCES,
+  CONSTRAINT ATB_PRODUTOS_SERV_FK01 
+ FOREIGN KEY (SEQ_PRODUTO) 
+ REFERENCES);
 
 ALTER TABLE ATB_JOB_DET ADD (
   CONSTRAINT ATB_JOB_DET_FK 
  FOREIGN KEY (SEQ_JOB) 
- REFERENCES ATB_JOB (SEQ_JOB));
+ REFERENCES);
 
-ALTER TABLE ATB_MATERIAL_SALDOS ADD (
-  CONSTRAINT AMO_MAL_FK 
- FOREIGN KEY (SEQ_MATERIAL) 
- REFERENCES ATB_MATERIAL (SEQ_MATERIAL));
+ALTER TABLE ATB_CLIENTES_ENDERECOS ADD (
+  CONSTRAINT ACO_ACE_FK 
+ FOREIGN KEY (SEQ_CLIENTE) 
+ REFERENCES 
+    ON DELETE CASCADE);
 
-ALTER TABLE ATB_FORNECEDOR_ENDERECO ADD (
-  CONSTRAINT FEO_FRN_FK 
- FOREIGN KEY (SEQ_FORNECEDOR) 
- REFERENCES ATB_FORNECEDOR (SEQ_FORNECEDOR));
-
-ALTER TABLE ATB_NOTA_ENTRADA_ITEM ADD (
+ALTER TABLE ATB_NOTAS_ENT_ITENS ADD (
   CONSTRAINT ANM_ANA_FK 
  FOREIGN KEY (SEQ_FORNECEDOR, NUM_NOTA) 
- REFERENCES ATB_NOTA_ENTRADA (SEQ_FORNECEDOR,NUM_NOTA),
+ REFERENCES,
   CONSTRAINT ANM_MAL_FK 
  FOREIGN KEY (SEQ_MATERIAL) 
- REFERENCES ATB_MATERIAL (SEQ_MATERIAL));
+ REFERENCES);
 
-ALTER TABLE ATB_FORNECEDOR_MATERIAL ADD (
+ALTER TABLE ATB_FORNECEDORES_MAT ADD (
   CONSTRAINT FML_MAL_FK 
  FOREIGN KEY (SEQ_MATERIAL) 
- REFERENCES ATB_MATERIAL (SEQ_MATERIAL),
+ REFERENCES,
   CONSTRAINT FML_FRN_FK 
  FOREIGN KEY (SEQ_FORNECEDOR) 
- REFERENCES ATB_FORNECEDOR (SEQ_FORNECEDOR));
+ REFERENCES);
 
